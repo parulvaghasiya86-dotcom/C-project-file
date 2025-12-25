@@ -1,19 +1,25 @@
 #include <iostream>
-#include <string>
 using namespace std;
 
 class BankAccount {
 protected:
     int accountNumber;
-    string accountHolderName;
+    char accountHolderName[50];
 
 private:
     double balance;
 
 public:
-    BankAccount(int accNo, string name, double bal) {
+    BankAccount(int accNo, const char* name, double bal) {
         accountNumber = accNo;
-        accountHolderName = name;
+
+        int i = 0;
+        while (name[i] != '\0' && i < 49) {
+            accountHolderName[i] = name[i];
+            i++;
+        }
+        accountHolderName[i] = '\0';
+
         balance = bal;
     }
 
@@ -42,8 +48,7 @@ public:
         cout << "\nBalance: " << balance << endl;
     }
 
-    virtual void calculateInterest() {
-    }
+    virtual void calculateInterest() {}
 
     virtual ~BankAccount() {}
 };
@@ -52,7 +57,7 @@ class SavingsAccount : public BankAccount {
     double interestRate;
 
 public:
-    SavingsAccount(int accNo, string name, double bal, double rate)
+    SavingsAccount(int accNo, const char* name, double bal, double rate)
         : BankAccount(accNo, name, bal) {
         interestRate = rate;
     }
@@ -67,7 +72,7 @@ class CheckingAccount : public BankAccount {
     double overdraftLimit;
 
 public:
-    CheckingAccount(int accNo, string name, double bal, double limit)
+    CheckingAccount(int accNo, const char* name, double bal, double limit)
         : BankAccount(accNo, name, bal) {
         overdraftLimit = limit;
     }
@@ -78,20 +83,13 @@ public:
         else
             cout << "Overdraft limit exceeded\n";
     }
-
-    void checkOverdraft(double amount) {
-        if (amount > getBalance())
-            cout << "Overdraft used\n";
-        else
-            cout << "No overdraft used\n";
-    }
 };
 
 class FixedDepositAccount : public BankAccount {
     int term;
 
 public:
-    FixedDepositAccount(int accNo, string name, double bal, int months)
+    FixedDepositAccount(int accNo, const char* name, double bal, int months)
         : BankAccount(accNo, name, bal) {
         term = months;
     }
@@ -120,8 +118,9 @@ int main() {
 
         if (choice == 1) {
             int accNo;
-            string name;
+            char name[50];
             double bal, rate;
+
             cout << "Enter Account Number: ";
             cin >> accNo;
             cout << "Enter Account Holder Name: ";
@@ -130,13 +129,15 @@ int main() {
             cin >> bal;
             cout << "Enter Interest Rate: ";
             cin >> rate;
+
             account = new SavingsAccount(accNo, name, bal, rate);
         }
 
         else if (choice == 2) {
             int accNo;
-            string name;
+            char name[50];
             double bal, limit;
+
             cout << "Enter Account Number: ";
             cin >> accNo;
             cout << "Enter Account Holder Name: ";
@@ -145,13 +146,15 @@ int main() {
             cin >> bal;
             cout << "Enter Overdraft Limit: ";
             cin >> limit;
+
             account = new CheckingAccount(accNo, name, bal, limit);
         }
 
         else if (choice == 3) {
             int accNo, term;
-            string name;
+            char name[50];
             double bal;
+
             cout << "Enter Account Number: ";
             cin >> accNo;
             cout << "Enter Account Holder Name: ";
@@ -160,6 +163,7 @@ int main() {
             cin >> bal;
             cout << "Enter Term (months): ";
             cin >> term;
+
             account = new FixedDepositAccount(accNo, name, bal, term);
         }
 
@@ -190,9 +194,9 @@ int main() {
     delete account;
     return 0;
 }
-
 /*
 	output:
+		
 	1. Create Savings Account
 	2. Create Checking Account
 	3. Create Fixed Deposit Account
@@ -202,11 +206,11 @@ int main() {
 	7. Calculate Interest
 	8. Exit
 	Enter choice: 1
-	Enter Account Number: 2344
+	Enter Account Number: 23345
 	Enter Account Holder Name: Shyam
-	Enter Initial Balance: 100000
+	Enter Initial Balance: 30000
 	Enter Interest Rate: 20
-
+	
 	1. Create Savings Account
 	2. Create Checking Account
 	3. Create Fixed Deposit Account
@@ -215,11 +219,8 @@ int main() {
 	6. Display Account Info
 	7. Calculate Interest
 	8. Exit
-	Enter choice: 3
-	Enter Account Number: 24359
-	Enter Account Holder Name: Dwarkesh
-	Enter Initial Balance: 200000
-	Enter Term (months): 1
+	Enter choice: 7
+	Savings Account Interest: 6000
 	
 	1. Create Savings Account
 	2. Create Checking Account
@@ -240,19 +241,11 @@ int main() {
 	6. Display Account Info
 	7. Calculate Interest
 	8. Exit
-	Enter choice: 5
-	Enter withdrawal amount: 20000
+	Enter choice: 6
 	
-	1. Create Savings Account
-	2. Create Checking Account
-	3. Create Fixed Deposit Account
-	4. Deposit
-	5. Withdraw
-	6. Display Account Info
-	7. Calculate Interest
-	8. Exit
-	Enter choice: 7
-	Fixed Deposit Interest: 1166.67
+	Account Number: 23345
+	Account Holder: Shyam
+	Balance: 50000
 	
 	1. Create Savings Account
 	2. Create Checking Account
@@ -263,4 +256,4 @@ int main() {
 	7. Calculate Interest
 	8. Exit
 	Enter choice: 8
-	*/
+*/
